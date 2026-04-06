@@ -62,23 +62,35 @@ dns:
   ipv6: true
   prefer-h3: false
   use-hosts: false
+  listen: 0.0.0.0:1053
   use-system-hosts: false
+  respect-rules: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
+  fake-ip-range6: fdfe:dcba:9876::/64
   fake-ip-filter:
-    - rule-set:Lan
-    - rule-set:China
-  default-nameserver:
+    - RULE-SET:Lan
+    - RULE-SET:China
+  fallback:
+    - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
+    - https://dns.google/dns-query#ecs=1.1.1.1/24&ecs-override=true
+  default-nameserver: # 默认 DNS, 用于解析 DNS 服务器 的域名，必须为 IP, 可为加密 DNS
     - tls://223.5.5.5
     - tls://223.6.6.6
-  nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
-  proxy-server-nameserver:
-    - https://doh.pub/dns-query
+  nameserver: # 默认的域名解析服务器，如不配置 fallback/proxy-server-nameserver , 则所有域名都由 nameserver 解析
+    - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
+    - https://dns.google/dns-query#ecs=1.1.1.1/24&ecs-override=true
+  proxy-server-nameserver:  # 代理节点域名解析服务器，仅用于解析代理节点的域名
+    - https://doh.pub/dns-query#ecs=114.114.114.114/24&ecs-override=true
+    - https://dns.alidns.com/dns-query#ecs=114.114.114.114/24&ecs-override=true
   direct-nameserver:
-    - https://doh.pub/dns-query
-    - https://dns.alidns.com/dns-query
+    - https://doh.pub/dns-query#ecs=114.114.114.114/24&ecs-override=true
+    - https://dns.alidns.com/dns-query#ecs=114.114.114.114/24&ecs-override=true
+  direct-nameserver-follow-policy: true
+  nameserver-policy: # 指定域名查询的解析服务器，优先于 nameserver/fallback 查询
+    "RULE-SET:China,Lan": 
+      - https://doh.pub/dns-query#ecs=114.114.114.114/24&ecs-override=true
+      - https://dns.alidns.com/dns-query#ecs=114.114.114.114/24&ecs-override=true
 
 # GEO配置
 geodata-mode: false
@@ -323,38 +335,37 @@ rule-anchor:
 # 规则集配置
 rule-providers:
   # 域名规则集
-  Advertising:    { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockmihomolite.mrs }
-  spotify-ads:    { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/spotify@ads.mrs }
-  google-ads:     { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google@ads.mrs }
-  Apple:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple@cn.mrs }
-  China:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs }
-  Claude:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/anthropic.mrs }
-  Disney:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/disney.mrs }
-  Emby:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-emby.mrs }
-  Gemini:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google-gemini.mrs }
-  Github:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/github.mrs }
-  Google:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google.mrs }
-  Lan:            { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs }
-  Microsoft:      { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft.mrs  }
-  Netflix:        { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/netflix.mrs }
-  OpenAI:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/openai.mrs }
-  OneDrive:       { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/onedrive.mrs }
-  Steam:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/steam.mrs }
-  Spotify:        { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/spotify.mrs }
-  TikTok:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs }
-  WhatsApp:       { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/whatsapp.mrs }
-  Twitter:        { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/x.mrs }
-  Telegram:       { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs }
-  YouTube:        { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/youtube.mrs }
-  DNSLeak:        { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/DNSLeak.mrs }
+  Advertising:      { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockmihomolite.mrs }
+  category-ads-all: { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ads-all.mrs }
+  Apple:            { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple@cn.mrs }
+  China:            { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs }
+  Claude:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/anthropic.mrs }
+  Disney:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/disney.mrs }
+  Emby:             { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-emby.mrs }
+  Gemini:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google-gemini.mrs }
+  Github:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/github.mrs }
+  Google:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/google.mrs }
+  Lan:              { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/private.mrs }
+  Microsoft:        { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/microsoft.mrs  }
+  Netflix:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/netflix.mrs }
+  OpenAI:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/openai.mrs }
+  OneDrive:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/onedrive.mrs }
+  Steam:            { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/steam.mrs }
+  Spotify:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/spotify.mrs }
+  TikTok:           { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/tiktok.mrs }
+  WhatsApp:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/whatsapp.mrs }
+  Twitter:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/x.mrs }
+  Telegram:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/telegram.mrs }
+  YouTube:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/youtube.mrs }
+  DNSLeak:          { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/DNSLeak.mrs }
 
   # IP规则集
-  ChinaIP:        { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cn.mrs }
-  GoogleIP:       { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/google.mrs }
-  LanIP:          { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/private.mrs }
-  NetflixIP:      { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/netflix.mrs }
-  TwitterIP:      { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/twitter.mrs }
-  TelegramIP:     { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs }
+  ChinaIP:          { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/cn.mrs }
+  GoogleIP:         { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/google.mrs }
+  LanIP:            { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/private.mrs }
+  NetflixIP:        { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/netflix.mrs }
+  TwitterIP:        { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/twitter.mrs }
+  TelegramIP:       { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs }
 
   # 应用规则集
   ChinaAPP:       { <<: *BehaviorCL, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/ChinaAPP.yaml }
@@ -362,7 +373,6 @@ rule-providers:
 # 官方配置文档: https://wiki.metacubex.one/config/rules/
 rules:
   # 自定义规则集
-  - RULE-SET,DNSLeak,手动选择
   - AND,((DST-PORT,443),(NETWORK,UDP),(NOT,((RULE-SET,ChinaIP))),(NOT,((RULE-SET,China)))),REJECT  # 阻止海外 QUIC 流量泄漏
   
   # 应用规则集
@@ -370,8 +380,7 @@ rules:
 
   # 域名规则集-按照优先级顺序排列
   - RULE-SET,Advertising,REJECT
-  - RULE-SET,spotify-ads,REJECT
-  - RULE-SET,google-ads,REJECT
+  - RULE-SET,category-ads-all,REJECT
   - RULE-SET,Github,Github
   - RULE-SET,OpenAI,OpenAI
   - RULE-SET,Gemini,Gemini
@@ -395,7 +404,7 @@ rules:
 
   # IP规则集-按照优先级顺序排列
   - RULE-SET,LanIP,DIRECT
-  - RULE-SET,ChinaIP,DIRECT
+  - RULE-SET,ChinaIP,DIRECT,no-resolve
   - RULE-SET,GoogleIP,Google,no-resolve
   - RULE-SET,TelegramIP,Telegram,no-resolve
   - RULE-SET,TwitterIP,Twitter(X),no-resolve

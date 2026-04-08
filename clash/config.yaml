@@ -1,6 +1,6 @@
 # 地址: https://github.com/Wans-OS/my-backup
 # 作者: Wans
-# 更新: 2026-04-01 16:27:07
+# 更新: 2026-04-09 00:15:13
 # 描述: 在proxy-providers加入您的机场订阅链接 (代理提供者)
 
 # 订阅锚点，排除了一些节点，例如 包含剩余, 官网, 到期, 也可以在exclude-filter添加你需要排除的节点
@@ -24,7 +24,7 @@ ProvidersFILE: &ProvidersFILE { exclude-filter: *FilterPP, type: file, interval:
 proxy-providers:
   main:
     <<: *ProvidersURL
-    url: https://al121.cc/#/register?code=R7vdKxbE
+    url: https://anyland.club/#/register?code=R7vdKxbE
     path: ./proxy_provider/main.yaml
     override:
       udp: true
@@ -61,9 +61,9 @@ dns:
   enable: true
   ipv6: true
   prefer-h3: false
-  use-hosts: false
+  use-hosts: true
   listen: 0.0.0.0:1053
-  use-system-hosts: false
+  use-system-hosts: true
   respect-rules: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
@@ -73,24 +73,25 @@ dns:
     - RULE-SET:China
   fallback:
     - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
-    - https://dns.google/dns-query#ecs=1.1.1.1/24&ecs-override=true
+    - https://dns.google/dns-query#ecs=8.8.8.8/24&ecs-override=true
   default-nameserver: # 默认 DNS, 用于解析 DNS 服务器 的域名，必须为 IP, 可为加密 DNS
     - tls://223.5.5.5
-    - tls://223.6.6.6
+    - tls://119.29.29.29
+    - tls://8.8.8.8
   nameserver: # 默认的域名解析服务器，如不配置 fallback/proxy-server-nameserver , 则所有域名都由 nameserver 解析
     - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
-    - https://dns.google/dns-query#ecs=1.1.1.1/24&ecs-override=true
+    - https://dns.google/dns-query#ecs=8.8.8.8/24&ecs-override=true
   proxy-server-nameserver:  # 代理节点域名解析服务器，仅用于解析代理节点的域名
-    - https://doh.pub/dns-query#ecs=114.114.114.114/24&ecs-override=true
-    - https://dns.alidns.com/dns-query#ecs=114.114.114.114/24&ecs-override=true
+    - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
+    - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
   direct-nameserver:
-    - https://doh.pub/dns-query#ecs=114.114.114.114/24&ecs-override=true
-    - https://dns.alidns.com/dns-query#ecs=114.114.114.114/24&ecs-override=true
+    - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
+    - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
   direct-nameserver-follow-policy: true
   nameserver-policy: # 指定域名查询的解析服务器，优先于 nameserver/fallback 查询
     "RULE-SET:China,Lan": 
-      - https://doh.pub/dns-query#ecs=114.114.114.114/24&ecs-override=true
-      - https://dns.alidns.com/dns-query#ecs=114.114.114.114/24&ecs-override=true
+      - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
+      - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
 
 # GEO配置
 geodata-mode: false
@@ -99,8 +100,8 @@ geo-update-interval: 24
 geodata-loader: memconservative
 geox-url:
   geoip: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
-  geosite: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
   mmdb: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+  geosite: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
   asn: "https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/GeoLite2-ASN.mmdb"
 
 # 入站
@@ -142,10 +143,10 @@ external-controller: '127.0.0.1:9090'
 
 
 # 代理组锚点 hidden: true 是为了隐藏地区分组，有需要显示出来的佬友可以删除
-BaseUT: &BaseUT { type: url-test, interval: 300, lazy: true, url: *UrlTest, hidden: true, include-all: true }
-BaseFB: &BaseFB { type: fallback, interval: 300, lazy: true, url: *UrlTest, hidden: true, include-all: true }
-BaseCR: &BaseCR { type: load-balance, interval: 300, lazy: true, url: *UrlTest, hidden: true, strategy: round-robin, include-all: true }
-BaseCH: &BaseCH { type: load-balance, interval: 300, lazy: true, url: *UrlTest, hidden: true, strategy: consistent-hashing, include-all: true }
+BaseUT: &BaseUT { type: url-test, interval: 300, lazy: true, hidden: true, include-all: true }
+BaseFB: &BaseFB { type: fallback, interval: 300, lazy: true, hidden: true, include-all: true }
+BaseCR: &BaseCR { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: round-robin }
+BaseCH: &BaseCH { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: consistent-hashing }
 
 # 代理组锚点
 SelectUL: &SelectUL { type: select, proxies: [ 香港, 台湾, 澳门, 狮城, 日本, 韩国, 美国, 英国, 德国, 法国, 印度, 越南, 印尼, 泰国, 澳洲, 巴西, 荷兰, 土耳其, 阿根廷, 冷门节点, DIRECT, REJECT ], include-all: true }
@@ -192,21 +193,21 @@ proxy-groups:
 
   # ===================== AI大模型 =====================
   - { name: Claude,     <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/lobehub/lobe-icons@master/packages/static-png/light/claude-color.png }
-  - { name: Gemini,     <<: *SelectSG, icon: https://fastly.jsdelivr.net/gh/lobehub/lobe-icons@master/packages/static-png/light/gemini-color.png }
+  - { name: Gemini,     <<: *SelectSG, icon: https://fastly.jsdelivr.net/gh/lobehub/lobe-icons@master/packages/static-png/light/gemini-color.png, url: "https://www.google.com/generate_204" }
   - { name: OpenAI,     <<: *SelectUS, icon: https://fastly.jsdelivr.net/gh/lobehub/lobe-icons@master/packages/static-png/light/openai.png }
 
   # ===================== 媒体 & 娱乐 =====================
-  - { name: Apple,      <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Apple.png }
+  - { name: Apple,      <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Apple.png, url: "https://www.apple.com/library/test/success.html" }
   - { name: Disney,     <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Disney.png }
   - { name: Netflix,    <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Netflix.png }
   - { name: Spotify,    <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Spotify.png }
   - { name: TikTok,     <<: *SelectTW, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/TikTok.png }
-  - { name: YouTube,    <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/YouTube.png}
+  - { name: YouTube,    <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/YouTube.png, url: "https://www.youtube.com/generate_204" }
 
   # ===================== 生产力 & 常用 =====================
   - { name: Emby,       <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Emby.png }
   - { name: Github,     <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/GitHub.png }
-  - { name: Google,     <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Google_Search.png }
+  - { name: Google,     <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Google_Search.png, url: "https://www.google.com/generate_204" }
   - { name: Microsoft,  <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Microsoft.png }
   - { name: OneDrive,   <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/OneDrive.png }
 
@@ -335,7 +336,6 @@ rule-anchor:
 # 规则集配置
 rule-providers:
   # 域名规则集
-  Advertising:      { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/217heidai/adblockfilters@main/rules/adblockmihomolite.mrs }
   category-ads-all: { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/category-ads-all.mrs }
   Apple:            { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/apple@cn.mrs }
   China:            { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/cn.mrs }
@@ -379,7 +379,6 @@ rules:
   - RULE-SET,ChinaAPP,DIRECT  
 
   # 域名规则集-按照优先级顺序排列
-  - RULE-SET,Advertising,REJECT
   - RULE-SET,category-ads-all,REJECT
   - RULE-SET,Github,Github
   - RULE-SET,OpenAI,OpenAI

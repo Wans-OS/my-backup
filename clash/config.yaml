@@ -1,10 +1,10 @@
 # 地址: https://github.com/Wans-OS/my-backup
 # 作者: Wans
-# 更新: 2026-04-09 00:15:13
+# 更新: 2026-04-29 19:38:17
 # 描述: 在proxy-providers加入您的机场订阅链接 (代理提供者)
 
 # 订阅锚点，排除了一些节点，例如 包含剩余, 官网, 到期, 也可以在exclude-filter添加你需要排除的节点
-FilterPP: &FilterPP "Expire|到期|剩余|Traffic|网址|官网|过期|会员ID"
+FilterPP: &FilterPP "Expire|到期|剩余|Traffic|网址|官网|过期|地址"
 
 # 测速地址
 # YouTube
@@ -26,6 +26,11 @@ proxy-providers:
     <<: *ProvidersURL
     url: https://anyland.club/#/register?code=R7vdKxbE
     path: ./proxy_provider/main.yaml
+    header:
+      User-Agent:
+        - "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+      token:
+        - "*********"
     override:
       udp: true
       additional-prefix: '主-'  # 订阅节点前缀，方便区分该节点属于哪个订阅链接 例如`主-香港🇭🇰
@@ -55,6 +60,7 @@ keep-alive-idle: 600
 profile:
   store-selected: true
   store-fake-ip: true
+  tracing: true
 
 # DNS配置
 dns:
@@ -72,26 +78,28 @@ dns:
     - RULE-SET:Lan
     - RULE-SET:China
   fallback:
+    - https://dns.adguard-dns.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
     - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
-    - https://dns.google/dns-query#ecs=8.8.8.8/24&ecs-override=true
+    - https://dns.google/dns-query#ecs=1.1.1.1/24&ecs-override=true
+  direct-nameserver-follow-policy: true # 用于 direct 出口域名解析的 DNS 服务器，如果不填则遵循 nameserver-policy、nameserver 和 fallback 的配置
   default-nameserver: # 默认 DNS, 用于解析 DNS 服务器 的域名，必须为 IP, 可为加密 DNS
     - tls://223.5.5.5
     - tls://119.29.29.29
-    - tls://8.8.8.8
   nameserver: # 默认的域名解析服务器，如不配置 fallback/proxy-server-nameserver , 则所有域名都由 nameserver 解析
+    - https://dns.adguard-dns.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
     - https://dns.cloudflare.com/dns-query#ecs=1.1.1.1/24&ecs-override=true
-    - https://dns.google/dns-query#ecs=8.8.8.8/24&ecs-override=true
-  proxy-server-nameserver:  # 代理节点域名解析服务器，仅用于解析代理节点的域名
-    - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
-    - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
-  direct-nameserver:
-    - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
-    - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
-  direct-nameserver-follow-policy: true
+    - https://dns.google/dns-query#ecs=1.1.1.1/24&ecs-override=true
   nameserver-policy: # 指定域名查询的解析服务器，优先于 nameserver/fallback 查询
     "RULE-SET:China,Lan": 
-      - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
       - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
+      - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
+  proxy-server-nameserver:  # 代理节点域名解析服务器，仅用于解析代理节点的域名，如果不填则遵循 nameserver-policy、nameserver 和 fallback 的配置
+    - https://dns.alidns.com/dns-query#ecs=223.5.5.5/24&ecs-override=true
+    - https://doh.pub/dns-query#ecs=223.5.5.5/24&ecs-override=true
+  proxy-server-nameserver-policy: # 格式同nameserver-policy，仅用于节点域名解析，优先于proxy-server-nameserver查询，自定义机场在此添加DNS
+    '*.digital-nvme.com': 
+      - 8.138.94.132:8053
+
 
 # GEO配置
 geodata-mode: false
@@ -133,28 +141,24 @@ sniffer:
 # 实验性功能
 experimental:
   quic-go-disable-gso: true
+  sniff-tls-sni: true
 
 # 面板设置
 external-ui-name: zashboard
 external-ui: ui
 external-ui-url: https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip
-# secret: "Wans"
+secret: Wans
 external-controller: '127.0.0.1:9090'
 
-
-# 代理组锚点 hidden: true 是为了隐藏地区分组，有需要显示出来的佬友可以删除
-BaseUT: &BaseUT { type: url-test, interval: 300, lazy: true, hidden: true, include-all: true }
-BaseFB: &BaseFB { type: fallback, interval: 300, lazy: true, hidden: true, include-all: true }
-BaseCR: &BaseCR { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: round-robin }
-BaseCH: &BaseCH { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: consistent-hashing }
-
-# 代理组锚点
-SelectUL: &SelectUL { type: select, proxies: [ 香港, 台湾, 澳门, 狮城, 日本, 韩国, 美国, 英国, 德国, 法国, 印度, 越南, 印尼, 泰国, 澳洲, 巴西, 荷兰, 土耳其, 阿根廷, 冷门节点, DIRECT, REJECT ], include-all: true }
-SelectTW: &SelectTW { type: select, proxies: [ 台湾, 香港, 澳门, 狮城, 日本, 韩国, 美国, 英国, 德国, 法国, 印度, 越南, 印尼, 泰国, 澳洲, 巴西, 荷兰, 土耳其, 阿根廷, 冷门节点, DIRECT, REJECT, 手动选择 ] }
-SelectUS: &SelectUS { type: select, proxies: [ 美国, 香港, 台湾, 澳门, 狮城, 日本, 韩国, 英国, 德国, 法国, 印度, 越南, 印尼, 泰国, 澳洲, 巴西, 荷兰, 土耳其, 阿根廷, 冷门节点, DIRECT, REJECT, 手动选择 ] }
-SelectSG: &SelectSG { type: select, proxies: [ 狮城, 美国, 香港, 台湾, 澳门, 日本, 韩国, 英国, 德国, 法国, 印度, 越南, 印尼, 泰国, 澳洲, 巴西, 荷兰, 土耳其, 阿根廷, 冷门节点, DIRECT, REJECT, 手动选择 ] }
-SelectSL: &SelectSL { type: select, proxies: [ 手动选择, 香港, 台湾, 澳门, 狮城, 日本, 韩国, 美国, 英国, 德国, 法国, 印度, 越南, 印尼, 泰国, 澳洲, 巴西, 荷兰, 土耳其, 阿根廷, 冷门节点, DIRECT, REJECT ] }
-SelectCS: &SelectCS { type: select, lazy: true, include-all: true, hidden: true }
+# 代理节点: 可以将自己的节点放在这里
+# proxies:
+#   - name: "[SS] domain"
+#     type: ss
+#     server: abaosd.jasidofnbasdfij.com
+#     port: 443
+#     cipher: chacha20-ietf-poly1305
+#     password: 4nggcF
+#     udp: true
 
 # 节点筛选锚点
 FilterHK: &FilterHK "(?i)(?=.*(🇭🇰|香港|港|hk|hkg|hong ?kong))"
@@ -177,15 +181,65 @@ FilterNL: &FilterNL "(?i)(?=.*(🇳🇱|荷兰|NL|NLD))"
 FilterTU: &FilterTU "(?i)(?=.*(🇹🇷|土耳其|TUR|turkey))"
 FilterAR: &FilterAR "(?i)(?=.*(🇦🇷|阿根廷|ARG|argentina))"
 
-# 代理节点: 可以将自己的节点放在这里
-# proxies:
-#   - name: "[SS] domain"
-#     type: ss
-#     server: abaosd.jasidofnbasdfij.com
-#     port: 443
-#     cipher: chacha20-ietf-poly1305
-#     password: 4nggcF
-#     udp: true
+# 地区锚点
+City: &City [
+    香港自动, 香港-回退, 香港均衡-散列, 香港均衡-轮询,
+    台湾自动, 台湾-回退, 台湾均衡-散列, 台湾均衡-轮询,
+    澳门自动, 澳门-回退, 澳门均衡-散列, 澳门均衡-轮询,
+    狮城自动, 狮城-回退, 狮城均衡-散列, 狮城均衡-轮询,
+    日本自动, 日本-回退, 日本均衡-散列, 日本均衡-轮询,
+    韩国自动, 韩国-回退, 韩国均衡-散列, 韩国均衡-轮询,
+    美国自动, 美国-回退, 美国均衡-散列, 美国均衡-轮询,
+    英国自动, 英国-回退, 英国均衡-散列, 英国均衡-轮询,
+    德国自动, 德国-回退, 德国均衡-散列, 德国均衡-轮询,
+    法国自动, 法国-回退, 法国均衡-散列, 法国均衡-轮询,
+    印度自动, 印度-回退, 印度均衡-散列, 印度均衡-轮询,
+    印尼自动, 印尼-回退, 印尼均衡-散列, 印尼均衡-轮询,
+    越南自动, 越南-回退, 越南均衡-散列, 越南均衡-轮询,
+    泰国自动, 泰国-回退, 泰国均衡-散列, 泰国均衡-轮询,
+    澳洲自动, 澳洲-回退, 澳洲均衡-散列, 澳洲均衡-轮询,
+    巴西自动, 巴西-回退, 巴西均衡-散列, 巴西均衡-轮询,
+    荷兰自动, 荷兰-回退, 荷兰均衡-散列, 荷兰均衡-轮询,
+    土耳其自动, 土耳其-回退, 土耳其均衡-散列, 土耳其均衡-轮询,
+    阿根廷自动, 阿根廷-回退, 阿根廷均衡-散列, 阿根廷均衡-轮询,
+    
+  ]
+CityWithManual: &CityWithManual [
+    手动选择, 
+    香港自动, 香港-回退, 香港均衡-散列, 香港均衡-轮询,
+    台湾自动, 台湾-回退, 台湾均衡-散列, 台湾均衡-轮询,
+    澳门自动, 澳门-回退, 澳门均衡-散列, 澳门均衡-轮询,
+    狮城自动, 狮城-回退, 狮城均衡-散列, 狮城均衡-轮询,
+    日本自动, 日本-回退, 日本均衡-散列, 日本均衡-轮询,
+    韩国自动, 韩国-回退, 韩国均衡-散列, 韩国均衡-轮询,
+    美国自动, 美国-回退, 美国均衡-散列, 美国均衡-轮询,
+    英国自动, 英国-回退, 英国均衡-散列, 英国均衡-轮询,
+    德国自动, 德国-回退, 德国均衡-散列, 德国均衡-轮询,
+    法国自动, 法国-回退, 法国均衡-散列, 法国均衡-轮询,
+    印度自动, 印度-回退, 印度均衡-散列, 印度均衡-轮询,
+    印尼自动, 印尼-回退, 印尼均衡-散列, 印尼均衡-轮询,
+    越南自动, 越南-回退, 越南均衡-散列, 越南均衡-轮询,
+    泰国自动, 泰国-回退, 泰国均衡-散列, 泰国均衡-轮询,
+    澳洲自动, 澳洲-回退, 澳洲均衡-散列, 澳洲均衡-轮询,
+    巴西自动, 巴西-回退, 巴西均衡-散列, 巴西均衡-轮询,
+    荷兰自动, 荷兰-回退, 荷兰均衡-散列, 荷兰均衡-轮询,
+    土耳其自动, 土耳其-回退, 土耳其均衡-散列, 土耳其均衡-轮询,
+    阿根廷自动, 阿根廷-回退, 阿根廷均衡-散列, 阿根廷均衡-轮询,
+    DIRECT,
+  ]
+
+# 代理组-锚点
+SelectUL: &SelectUL { type: select, proxies: *City, include-all: true }
+SelectTW: &SelectTW { type: select, proxies: *CityWithManual }
+SelectUS: &SelectUS { type: select, proxies: *CityWithManual }
+SelectSG: &SelectSG { type: select, proxies: *CityWithManual }
+SelectSL: &SelectSL { type: select, proxies: *CityWithManual }
+
+# 代理组-锚点 hidden: true 是为了隐藏地区分组，有需要显示出来的佬友可以删除
+BaseUT: &BaseUT { type: url-test, interval: 300, lazy: true, hidden: true, include-all: true }
+BaseFB: &BaseFB { type: fallback, interval: 300, lazy: true, hidden: true, include-all: true }
+BaseCR: &BaseCR { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: round-robin }
+BaseCH: &BaseCH { type: load-balance, interval: 300, lazy: true, hidden: true, include-all: true, strategy: consistent-hashing }
 
 # 代理组
 proxy-groups:
@@ -218,29 +272,6 @@ proxy-groups:
 
   # ===================== 游戏 & 下载 =====================
   - { name: Steam,      <<: *SelectSL, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Steam.png }
-
-  # ===================== 地区分组 =====================
-  - { name: 香港,       <<: *SelectCS, filter: *FilterHK, proxies: [ 香港自动, 香港-回退, 香港均衡-散列, 香港均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Hong_Kong.png }
-  - { name: 台湾,       <<: *SelectCS, filter: *FilterTW, proxies: [ 台湾自动, 台湾-回退, 台湾均衡-散列, 台湾均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Taiwan.png }
-  - { name: 澳门,       <<: *SelectCS, filter: *FilterMO, proxies: [ 澳门自动, 澳门-回退, 澳门均衡-散列, 澳门均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Macao.png }
-  - { name: 狮城,       <<: *SelectCS, filter: *FilterSG, proxies: [ 狮城自动, 狮城-回退, 狮城均衡-散列, 狮城均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Singapore.png }
-  - { name: 日本,       <<: *SelectCS, filter: *FilterJP, proxies: [ 日本自动, 日本-回退, 日本均衡-散列, 日本均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Japan.png }
-  - { name: 韩国,       <<: *SelectCS, filter: *FilterKR, proxies: [ 韩国自动, 韩国-回退, 韩国均衡-散列, 韩国均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Korea.png }
-  - { name: 美国,       <<: *SelectCS, filter: *FilterUS, proxies: [ 美国自动, 美国-回退, 美国均衡-散列, 美国均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/United_States.png }
-  - { name: 英国,       <<: *SelectCS, filter: *FilterUK, proxies: [ 英国自动, 英国-回退, 英国均衡-散列, 英国均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/United_Kingdom.png }
-  - { name: 德国,       <<: *SelectCS, filter: *FilterDE, proxies: [ 德国自动, 德国-回退, 德国均衡-散列, 德国均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Germany.png }
-  - { name: 法国,       <<: *SelectCS, filter: *FilterFR, proxies: [ 法国自动, 法国-回退, 法国均衡-散列, 法国均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/France.png }
-  - { name: 印度,       <<: *SelectCS, filter: *FilterIN, proxies: [ 印度自动, 印度-回退, 印度均衡-散列, 印度均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/India.png }
-  - { name: 印尼,       <<: *SelectCS, filter: *FilterID, proxies: [ 印尼自动, 印尼-回退, 印尼均衡-散列, 印尼均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Indonesia.webp }
-  - { name: 越南,       <<: *SelectCS, filter: *FilterVN, proxies: [ 越南自动, 越南-回退, 越南均衡-散列, 越南均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Vietnam.png }
-  - { name: 泰国,       <<: *SelectCS, filter: *FilterTH, proxies: [ 泰国自动, 泰国-回退, 泰国均衡-散列, 泰国均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Thailand.png }
-  - { name: 澳洲,       <<: *SelectCS, filter: *FilterAU, proxies: [ 澳洲自动, 澳洲-回退, 澳洲均衡-散列, 澳洲均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Australia.png }
-  - { name: 巴西,       <<: *SelectCS, filter: *FilterBR, proxies: [ 巴西自动, 巴西-回退, 巴西均衡-散列, 巴西均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Brazil.png }
-  - { name: 荷兰,       <<: *SelectCS, filter: *FilterNL, proxies: [ 荷兰自动, 荷兰-回退, 荷兰均衡-散列, 荷兰均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Netherlands.png }
-  - { name: 土耳其,     <<: *SelectCS, filter: *FilterTU, proxies: [ 土耳其自动, 土耳其-回退, 土耳其均衡-散列, 土耳其均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Turkey.png }
-  - { name: 阿根廷,     <<: *SelectCS, filter: *FilterAR, proxies: [ 阿根廷自动, 阿根廷-回退, 阿根廷均衡-散列, 阿根廷均衡-轮询 ], icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Argentina.png }
-# 除了常用的地区，其他地区都放这里
-  - { name: 冷门节点,   <<: *BaseUT, filter: '(?i)^(?!.*(香港|台湾|日本|韩国|新加坡|美国|英国|德国|法国|印度|泰国|越南|印度|澳大利亚|巴西|港|台|日|韩|新|美|英|德|法|印|泰|越|尼|澳|巴|hk|tw|jp|kr|sg|us|uk|de|fr|in|th|vn|id|au|br)).*', icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Global.png }
 
   # ===================== 地区分组(自动测速+隐藏) =====================
   - { name: 香港自动,       <<: *BaseUT, filter: *FilterHK, icon: https://fastly.jsdelivr.net/gh/0xWans/Qure@master/IconSet/Color/Hong_Kong.png }
@@ -402,7 +433,7 @@ rules:
   - RULE-SET,China,DIRECT
 
   # IP规则集-按照优先级顺序排列
-  - RULE-SET,LanIP,DIRECT
+  - RULE-SET,LanIP,DIRECT,no-resolve
   - RULE-SET,ChinaIP,DIRECT,no-resolve
   - RULE-SET,GoogleIP,Google,no-resolve
   - RULE-SET,TelegramIP,Telegram,no-resolve

@@ -14,6 +14,8 @@ payload:
   - PROCESS-NAME-REGEX,(?i)^com\.alibaba(\..+)?$
   - PROCESS-NAME,DingTalk
   - PROCESS-NAME,com.autonavi.minimap
+  - PROCESS-NAME,com.eg.android.AlipayGphone
+  - PROCESS-NAME,com.taobao.taobao
 
   # 字节跳动
   - PROCESS-NAME,com.ss.android.ugc.aweme
@@ -34,3 +36,16 @@ payload:
 
   # B站
   - PROCESS-NAME,tv.danmaku.bili
+
+  # 拼多多
+  - PROCESS-NAME,com.xunmeng.pinduoduo
+
+  # 美团
+  - PROCESS-NAME,com.dianping.v1
+  - PROCESS-NAME,com.sankuai.meituan
+
+  # 京东
+  - PROCESS-NAME,com.jingdong.app.mall
+
+  # 银行
+  - PROCESS-NAME,com.gf.client

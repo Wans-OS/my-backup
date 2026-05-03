@@ -22,6 +22,8 @@ payload:
   - PROCESS-NAME,Feishu
   - PROCESS-NAME,Lark Helper
   - PROCESS-NAME,com.phoenix.read
+  - PROCESS-NAME,com.dragon.read
+  - PROCESS-NAME,com.ss.android.auto
 
   # 小米
   - PROCESS-NAME-REGEX,(?i)^com\.xiaomi(\..+)?$
@@ -49,3 +51,15 @@ payload:
 
   # 银行
   - PROCESS-NAME,com.gf.client
+
+  # 酷安
+  - PROCESS-NAME,com.coolapk.market
+
+  # WPS Office
+  - PROCESS-NAME,cn.wps.moffice_eng
+
+  # 七猫小说
+  - PROCESS-NAME,com.kmxs.reader
+
+  # 微博
+  - PROCESS-NAME,com.sina.weibo

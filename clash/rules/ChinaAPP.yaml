@@ -13,11 +13,13 @@ payload:
   # 阿里巴巴
   - PROCESS-NAME-REGEX,com.alibaba.*.*
   - PROCESS-NAME,DingTalk
+  - PROCESS-NAME,com.autonavi.minimap
 
   # 字节跳动
   - PROCESS-NAME,com.ss.android.ugc.aweme
   - PROCESS-NAME,Feishu
   - PROCESS-NAME,Lark Helper
+  - PROCESS-NAME,com.phoenix.read
 
   # 小米
   - PROCESS-NAME-REGEX,com.xiaomi.*
@@ -25,6 +27,7 @@ payload:
   - PROCESS-NAME-REGEX,com.milink.*
   - PROCESS-NAME,小米互联服务
   - PROCESS-NAME,com.sohu.inputmethod.sogou.xiaomi
+  - PROCESS-NAME,com.mipay.wallet
 
   # 远程办公
   - PROCESS-NAME,AweSun

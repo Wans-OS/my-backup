@@ -1,7 +1,7 @@
 # NAME: ChinaAPP
 # AUTHOR: Wans
 # REPO: https://github.com/0xWans/my-backup
-# DATE: 2026-03-16 09:57:44
+
 payload:
   # 腾讯系
   - PROCESS-NAME-REGEX,com.tencent.*

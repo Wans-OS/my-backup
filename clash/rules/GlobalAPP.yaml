@@ -1,0 +1,37 @@
+# NAME: GlobalAPP
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  # TikTok
+  - PROCESS-NAME,com.ss.android.ugc.trill
+
+  # Spotify
+  - PROCESS-NAME,com.spotify.music
+
+  # Github
+  - PROCESS-NAME,com.github.android
+
+  # Twitter
+  - PROCESS-NAME,com.twitter.android
+  - PROCESS-NAME,ai.x.grok
+
+  # Reddit
+  - PROCESS-NAME,com.reddit.frontpage
+
+  # Telegram
+  - PROCESS-NAME,Telegram
+  - PROCESS-NAME,org.telegram.messenger
+
+  # Youtube
+  - PROCESS-NAME,com.google.android.youtube
+
+  # Google
+  - PROCESS-NAME,com.google.android.gms
+  - PROCESS-NAME,com.google.android.googlequicksearchbox
+
+  # Claude
+  - PROCESS-NAME,com.anthropic.claude
+
+  # ChatGPT
+  - PROCESS-NAME,com.openai.chatgpt

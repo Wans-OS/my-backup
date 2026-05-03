@@ -1,0 +1,6 @@
+# NAME: Github
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  - PROCESS-NAME,com.github.android

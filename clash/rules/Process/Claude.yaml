@@ -1,0 +1,6 @@
+# NAME: Claude
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  - PROCESS-NAME,com.anthropic.claude

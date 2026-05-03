@@ -1,0 +1,6 @@
+# NAME: Youtube
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  - PROCESS-NAME,com.google.android.youtube

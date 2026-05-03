@@ -1,0 +1,7 @@
+# NAME: Telegram
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  - PROCESS-NAME,Telegram
+  - PROCESS-NAME,org.telegram.messenger

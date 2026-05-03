@@ -400,7 +400,7 @@ rule-providers:
   TelegramIP:       { <<: *BehaviorIP, url: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geoip/telegram.mrs }
 
   # 应用规则集
-  ChinaAPP:       { <<: *BehaviorCL, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/ChinaAPP.yaml }
+  ChinaAPP:       { <<: *BehaviorCL, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/Process/ChinaAPP.yaml }
 
 # 官方配置文档: https://wiki.metacubex.one/config/rules/
 rules:
@@ -412,6 +412,7 @@ rules:
 
   # 域名规则集-按照优先级顺序排列
   - RULE-SET,category-ads-all,REJECT
+  - RULE-SET,YouTube,YouTube
   - RULE-SET,Github,Github
   - RULE-SET,OpenAI,OpenAI
   - RULE-SET,Gemini,Gemini
@@ -421,7 +422,6 @@ rules:
   - RULE-SET,Twitter,Twitter(X)
   - RULE-SET,Telegram,Telegram
   - RULE-SET,Spotify,Spotify
-  - RULE-SET,YouTube,YouTube
   - RULE-SET,TikTok,TikTok
   - RULE-SET,WhatsApp,WhatsApp
   - RULE-SET,OneDrive,OneDrive

@@ -1,0 +1,6 @@
+# NAME: TikTok
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  - PROCESS-NAME,com.ss.android.ugc.trill

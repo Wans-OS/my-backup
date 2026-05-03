@@ -1,0 +1,7 @@
+# NAME: Twitter
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  - PROCESS-NAME,com.twitter.android
+  - PROCESS-NAME,ai.x.grok

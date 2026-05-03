@@ -1,0 +1,6 @@
+# NAME: Reddit
+# AUTHOR: Wans
+# REPO: https://github.com/0xWans/my-backup
+
+payload:
+  - PROCESS-NAME,com.reddit.frontpage

@@ -3,7 +3,6 @@
 # REPO: https://github.com/0xWans/my-backup
 
 payload:
-  - PROCESS-NAME,com.google.android.gms
-  - PROCESS-NAME,com.google.android.gsf
+  - PROCESS-NAME-REGEX,(?i)^com\.google(\..+)?$
   - PROCESS-NAME,com.google.android.googlequicksearchbox
   - PROCESS-NAME,com.android.vending

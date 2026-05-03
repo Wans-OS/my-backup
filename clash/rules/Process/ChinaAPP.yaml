@@ -4,14 +4,14 @@
 
 payload:
   # 腾讯系
-  - PROCESS-NAME-REGEX,com.tencent.*
+  - PROCESS-NAME-REGEX,(?i)^com\.tencent(\..+)?$
   - PROCESS-NAME,WeChat
   - PROCESS-NAME,WeChatAppEx Helper
   - PROCESS-NAME,QQ
   - PROCESS-NAME,QQ Helper
 
   # 阿里巴巴
-  - PROCESS-NAME-REGEX,com.alibaba.*.*
+  - PROCESS-NAME-REGEX,(?i)^com\.alibaba(\..+)?$
   - PROCESS-NAME,DingTalk
   - PROCESS-NAME,com.autonavi.minimap
 
@@ -22,9 +22,8 @@ payload:
   - PROCESS-NAME,com.phoenix.read
 
   # 小米
-  - PROCESS-NAME-REGEX,com.xiaomi.*
-  - PROCESS-NAME-REGEX,com.miui.*
-  - PROCESS-NAME-REGEX,com.milink.*
+  - PROCESS-NAME-REGEX,(?i)^com\.xiaomi(\..+)?$
+  - PROCESS-NAME-REGEX,(?i)^com\.miui(\..+)?$
   - PROCESS-NAME,小米互联服务
   - PROCESS-NAME,com.sohu.inputmethod.sogou.xiaomi
   - PROCESS-NAME,com.mipay.wallet

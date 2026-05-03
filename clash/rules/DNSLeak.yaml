@@ -1,7 +1,7 @@
 # NAME: DNSLeak
 # AUTHOR: Wans
 # REPO: https://github.com/0xWans/my-backup
-# DATE: 2026-03-16 10:06:06
+
 payload:
   - +.checkip.dyndns.org
   - +.checkip.dyndns.com

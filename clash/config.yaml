@@ -401,10 +401,12 @@ rule-providers:
 
   # 应用规则集
   ChinaAPP:       { <<: *BehaviorCL, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/Process/ChinaAPP.yaml }
+  Direct:         { <<: *BehaviorCL, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/Direct.yaml }
 
 # 官方配置文档: https://wiki.metacubex.one/config/rules/
 rules:
   # 自定义规则集
+  - RULE-SET,Direct,DIRECT
   - AND,((DST-PORT,443),(NETWORK,UDP),(NOT,((RULE-SET,ChinaIP))),(NOT,((RULE-SET,China)))),REJECT  # 阻止海外 QUIC 流量泄漏
   
   # 应用规则集

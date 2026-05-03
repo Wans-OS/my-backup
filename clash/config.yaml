@@ -401,7 +401,7 @@ rule-providers:
 
   # 应用规则集
   ChinaAPP:       { <<: *BehaviorCL, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/Process/ChinaAPP.yaml }
-  Direct:         { <<: *BehaviorCL, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/Direct.yaml }
+  Direct:         { <<: *BehaviorDN, url: https://fastly.jsdelivr.net/gh/0xWans/my-backup@main/clash/rules/Direct.mrs }
 
 # 官方配置文档: https://wiki.metacubex.one/config/rules/
 rules:

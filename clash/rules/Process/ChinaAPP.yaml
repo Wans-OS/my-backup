@@ -13,6 +13,7 @@ payload:
   # 阿里巴巴
   - PROCESS-NAME-REGEX,(?i)^com\.alibaba(\..+)?$
   - PROCESS-NAME,DingTalk
+  - PROCESS-NAME,DingTalk.exe
   - PROCESS-NAME,com.autonavi.minimap
   - PROCESS-NAME,com.eg.android.AlipayGphone
   - PROCESS-NAME,com.taobao.taobao
